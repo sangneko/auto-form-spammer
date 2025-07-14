@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Auto Điền Google Form</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    textarea, input { width: 100%; margin-bottom: 10px; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Auto Điền Google Form</h2>
+  <label>Link Google Form:</label>
+  <input id="formUrl" placeholder="Dán link form ở đây (formResponse)"/>
+
+  <label>Dữ liệu câu hỏi (JSON):</label>
+  <textarea id="choices" rows="8">
+{
+  "entry.123": {"A": 60, "B": 40},
+  "entry.456": {"C": 100}
+}
+  </textarea>
+
+  <label>Số lần spam:</label>
+  <input type="number" id="times" value="5" min="1"/>
+
+  <button onclick="submitForm()">Bắt đầu gửi</button>
+
+  <pre id="result"></pre>
+
+  <script>
+    async function submitForm() {
+      const formUrl = document.getElementById("formUrl").value;
+      const choices = JSON.parse(document.getElementById("choices").value);
+      const times = document.getElementById("times").value;
+
+      const response = await fetch('/submit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({formUrl, choices, times})
+      });
+      const data = await response.json();
+      document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
